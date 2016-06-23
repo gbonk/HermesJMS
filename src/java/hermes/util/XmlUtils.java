@@ -26,10 +26,18 @@ import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+//import org.apache.xml.serialize.OutputFormat;
+//import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -89,15 +97,16 @@ public abstract class XmlUtils {
 							}
 
 						} catch (Exception ex) {
-							log.debug(ex.getMessage(), ex) ;
+							log.debug(ex.getMessage(), ex);
 						}
-						return new InputSource(new ByteArrayInputStream("<?xml version='1.0' encoding='UTF-8'?>".getBytes())) ;
+						return new InputSource(
+								new ByteArrayInputStream("<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
 					}
 				});
 
 				Document doc = builder.parse(source);
 				ret = prettyPrintXml(doc);
-				
+
 			} finally {
 				IoUtils.closeQuietly(reader);
 			}
@@ -113,15 +122,34 @@ public abstract class XmlUtils {
 		String ret = null;
 
 		try {
-			writer = new StringWriter();
-			OutputFormat format = new OutputFormat(doc);
-			format.setLineWidth(80);
-			format.setIndenting(true);
-			format.setIndent(2);
-			XMLSerializer serializer = new XMLSerializer(writer, format);
-			serializer.serialize(doc);
+		
+		//TODO
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		//initialize StreamResult with File object to save to file
+		StreamResult result = new StreamResult(new StringWriter());
+		DOMSource source = new DOMSource(doc);
+		transformer.transform(source, result);
+		ret = result.getWriter().toString();
+		
+		
 
-			ret = writer.toString();
+//			writer = new StringWriter();
+//			OutputFormat format = new OutputFormat(doc);
+//			format.setLineWidth(80);
+//			format.setIndenting(true);
+//			format.setIndent(2);
+//			XMLSerializer serializer = new XMLSerializer(writer, format);
+//			serializer.serialize(doc);
+//
+//			ret = writer.toString();
+		} catch (TransformerConfigurationException e) {
+			throw new RuntimeException( e);
+		} catch (TransformerFactoryConfigurationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			throw new RuntimeException(e);
 		} finally {
 			IoUtils.closeQuietly(writer);
 		}
@@ -130,6 +158,6 @@ public abstract class XmlUtils {
 	}
 
 	public static boolean isXML(final String s) {
-		return s != null && (s.startsWith("<?xml") || s.startsWith("<")) ;
+		return s != null && (s.startsWith("<?xml") || s.startsWith("<"));
 	}
 }

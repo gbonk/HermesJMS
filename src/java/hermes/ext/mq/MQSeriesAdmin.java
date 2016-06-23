@@ -17,14 +17,6 @@
 
 package hermes.ext.mq;
 
-import hermes.Domain;
-import hermes.Hermes;
-import hermes.HermesAdmin;
-import hermes.HermesException;
-import hermes.browser.MessageRenderer;
-import hermes.config.DestinationConfig;
-import hermes.ext.HermesAdminSupport;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -54,6 +46,14 @@ import com.ibm.mq.pcf.CMQCFC;
 import com.ibm.mq.pcf.PCFException;
 import com.ibm.mq.pcf.PCFMessage;
 import com.ibm.mq.pcf.PCFMessageAgent;
+
+import hermes.Domain;
+import hermes.Hermes;
+import hermes.HermesAdmin;
+import hermes.HermesException;
+import hermes.browser.MessageRenderer;
+import hermes.config.DestinationConfig;
+import hermes.ext.HermesAdminSupport;
 
 /**
  * @author colincrist@hermesjms.com
@@ -100,6 +100,7 @@ public class MQSeriesAdmin extends HermesAdminSupport implements HermesAdmin
    {
       if (queueManager == null)
       {
+     
          MQEnvironment.channel = mqCF.getChannel();
          MQEnvironment.port = mqCF.getPort();
          MQEnvironment.hostname = mqCF.getHostName();

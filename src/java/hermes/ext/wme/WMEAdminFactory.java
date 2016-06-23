@@ -26,10 +26,10 @@ import hermes.JNDIQueueConnectionFactory;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.naming.NamingException;
-
-import COM.activesw.api.client.BrokerAdminClient;
-import COM.activesw.api.client.BrokerConnectionDescriptor;
-import COM.activesw.api.client.BrokerException;
+//TODO had to make these lowercase for now as I'm building on a Mac
+import com.activesw.api.client.BrokerAdminClient;
+import com.activesw.api.client.BrokerConnectionDescriptor;
+import com.activesw.api.client.BrokerException;
 
 import com.wm.broker.jms.QueueConnectionFactoryAdmin;
 

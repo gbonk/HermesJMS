@@ -32,6 +32,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
+import org.apache.mina.core.filterchain.IoFilter.NextFilter;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 
 import quickfix.DataDictionary;
@@ -92,6 +94,12 @@ public abstract class AbstractQuickFIXMessage implements FIXMessage {
 		public void flush() {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void flush(NextFilter nextFilter, IoSession session) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 

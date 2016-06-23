@@ -33,11 +33,11 @@ import java.util.TreeMap;
 import javax.jms.JMSException;
 
 import org.apache.log4j.Logger;
-
-import COM.activesw.api.client.BrokerAdminClient;
-import COM.activesw.api.client.BrokerEvent;
-import COM.activesw.api.client.BrokerException;
-import COM.activesw.api.client.BrokerField;
+//TODO  Had to set these to lowercase for now as I'm building on a Mac
+import com.activesw.api.client.BrokerAdminClient;
+import com.activesw.api.client.BrokerEvent;
+import com.activesw.api.client.BrokerException;
+import com.activesw.api.client.BrokerField;
 
 import com.wm.broker.jms.QueueAdmin;
 

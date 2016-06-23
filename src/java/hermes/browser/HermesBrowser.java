@@ -17,6 +17,77 @@
 
 package hermes.browser;
 
+import java.awt.BorderLayout;
+import java.awt.HeadlessException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.jms.DeliveryMode;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.Converter;
+import org.apache.log4j.Logger;
+import org.python.core.PyException;
+
+import com.jidesoft.action.CommandBar;
+import com.jidesoft.action.DefaultDockableBarDockableHolder;
+import com.jidesoft.comparator.ObjectComparatorManager;
+import com.jidesoft.converter.ObjectConverterManager;
+import com.jidesoft.dialog.JideOptionPane;
+import com.jidesoft.docking.DefaultDockingManager;
+import com.jidesoft.docking.event.DockableFrameAdapter;
+import com.jidesoft.docking.event.DockableFrameEvent;
+import com.jidesoft.document.DocumentComponent;
+import com.jidesoft.document.DocumentComponentEvent;
+import com.jidesoft.document.DocumentComponentListener;
+import com.jidesoft.document.DocumentPane;
+import com.jidesoft.grid.CellEditorManager;
+import com.jidesoft.grid.CellRendererManager;
+import com.jidesoft.plaf.LookAndFeelFactory;
+import com.jidesoft.status.MemoryStatusBarItem;
+import com.jidesoft.status.ProgressStatusBarItem;
+import com.jidesoft.status.StatusBar;
+import com.jidesoft.status.TimeStatusBarItem;
+import com.jidesoft.swing.JideBoxLayout;
+import com.jidesoft.swing.JideScrollPane;
+//import com.jidesoft.swing.SplashScreen;
+import com.jidesoft.utils.Lm;
+
 import hermes.ConnectionListener;
 import hermes.Domain;
 import hermes.Hermes;
@@ -65,79 +136,7 @@ import hermes.renderers.RendererManager;
 import hermes.store.MessageStore;
 import hermes.util.JVMUtils;
 import hermes.util.TextUtils;
-
-import java.awt.BorderLayout;
-import java.awt.HeadlessException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
 import jsyntaxpane.DefaultSyntaxKit;
-
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.Converter;
-import org.apache.log4j.Logger;
-import org.python.core.PyException;
-
-import com.jidesoft.action.CommandBar;
-import com.jidesoft.action.DefaultDockableBarDockableHolder;
-import com.jidesoft.comparator.ObjectComparatorManager;
-import com.jidesoft.converter.ObjectConverterManager;
-import com.jidesoft.dialog.JideOptionPane;
-import com.jidesoft.docking.DefaultDockingManager;
-import com.jidesoft.docking.event.DockableFrameAdapter;
-import com.jidesoft.docking.event.DockableFrameEvent;
-import com.jidesoft.document.DocumentComponent;
-import com.jidesoft.document.DocumentComponentEvent;
-import com.jidesoft.document.DocumentComponentListener;
-import com.jidesoft.document.DocumentPane;
-import com.jidesoft.grid.CellEditorManager;
-import com.jidesoft.grid.CellRendererManager;
-import com.jidesoft.plaf.LookAndFeelFactory;
-import com.jidesoft.status.MemoryStatusBarItem;
-import com.jidesoft.status.ProgressStatusBarItem;
-import com.jidesoft.status.StatusBar;
-import com.jidesoft.status.TimeStatusBarItem;
-import com.jidesoft.swing.JideBoxLayout;
-import com.jidesoft.swing.JideScrollPane;
-import com.jidesoft.swing.SplashScreen;
-import com.jidesoft.utils.Lm;
 
 /**
  * HermesBrowser. A Swing GUI for working with JMS
@@ -177,6 +176,7 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 	}
 
 	public static void main(String[] args) {
+		
 		log.debug("Hermes Browser " + Hermes.VERSION + " starting...");
 		log.debug("working directory: " + new File(".").getAbsolutePath());
 
@@ -221,9 +221,9 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 			}
 		}, File.class);
 
-		SplashScreen.create(IconCache.getIcon("hermes.splash"));
-		SplashScreen.show();
-		
+//		SplashScreen.create(IconCache.getIcon("hermes.splash"));
+//		SplashScreen.show();
+
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -554,7 +554,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 					getConfig().getWatch().remove(wConfig);
 					queueWatchFrames.remove(wConfig.getId());
 				} catch (HermesException ex) {
-					Hermes.ui.getDefaultMessageSink().add("Unable to remove watch " + wConfig.getId() + " from configuration: " + ex.getMessage());
+					Hermes.ui.getDefaultMessageSink().add(
+							"Unable to remove watch " + wConfig.getId() + " from configuration: " + ex.getMessage());
 				}
 
 				getDockingManager().removeFrame(wConfig.getId());
@@ -568,7 +569,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 		try {
 			getConfig().getWatch().add(wConfig);
 		} catch (HermesException ex) {
-			Hermes.ui.getDefaultMessageSink().add("Unable to add watch " + wConfig.getId() + " to configuration: " + ex.getMessage());
+			Hermes.ui.getDefaultMessageSink()
+					.add("Unable to add watch " + wConfig.getId() + " to configuration: " + ex.getMessage());
 		}
 
 		frame.updateNow();
@@ -604,8 +606,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 		return browserTreePane.getBrowserTree();
 	}
 
-	public Context createContext(String id) throws JMSException, NamingException, InvocationTargetException, IOException, IllegalAccessException,
-			NoSuchMethodException {
+	public Context createContext(String id) throws JMSException, NamingException, InvocationTargetException,
+			IOException, IllegalAccessException, NoSuchMethodException {
 		final NamingConfig config = getBrowserTree().getBrowserModel().getNamingConfigTreeNode(id).getConfig();
 		final JNDIContextFactory factory = new JNDIContextFactory(config);
 		return factory.createContext();
@@ -661,7 +663,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 				try {
 					if (!hermesXML.exists()) {
 						hermesXML.createNewFile();
-						InputStream istream = getClass().getClassLoader().getResourceAsStream("hermes/bootstrap/default-hermes-config.xml"); // ClassLoader.getSystemResourceAsStream("hermes/bootstrap/default-hermes-config.xml");
+						InputStream istream = getClass().getClassLoader()
+								.getResourceAsStream("hermes/bootstrap/default-hermes-config.xml"); // ClassLoader.getSystemResourceAsStream("hermes/bootstrap/default-hermes-config.xml");
 						OutputStream ostream = new FileOutputStream(hermesXML);
 
 						int i;
@@ -723,13 +726,14 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 	 * @throws HermesException
 	 */
 	public int getMaxMessagesInBrowserPane() throws HermesException {
-		return (loader.getConfig().getMaxMessagesInBrowserPane() == 0) ? DEFAULT_MAX_CACHED_MESSAGES : loader.getConfig().getMaxMessagesInBrowserPane();
+		return (loader.getConfig().getMaxMessagesInBrowserPane() == 0) ? DEFAULT_MAX_CACHED_MESSAGES
+				: loader.getConfig().getMaxMessagesInBrowserPane();
 
 	}
 
 	public long getQueueBrowseConsumerTimeout() throws HermesException {
-		return (loader.getConfig().getQueueBrowseConsumerTimeout() == 0) ? DEFAULT_QUEUE_BROWSE_CONSUMER_TIMEOUT : loader.getConfig()
-				.getQueueBrowseConsumerTimeout();
+		return (loader.getConfig().getQueueBrowseConsumerTimeout() == 0) ? DEFAULT_QUEUE_BROWSE_CONSUMER_TIMEOUT
+				: loader.getConfig().getQueueBrowseConsumerTimeout();
 	}
 
 	/**
@@ -805,7 +809,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 		ThreadPool.get().setThreads(config.getMaxThreadPoolSize());
 	}
 
-	private void initJIDE() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private void initJIDE() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException,
+			IllegalAccessException {
 		try {
 			LookAndFeelFactory.installJideExtension();
 		} catch (IllegalArgumentException e) {
@@ -865,7 +870,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 	 * @throws UnsupportedLookAndFeelException
 	 * @throws HermesException
 	 */
-	private void initUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, HermesException {
+	private void initUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+			UnsupportedLookAndFeelException, HermesException {
 		if (System.getProperty("swing.defaultlaf") == null) {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -966,7 +972,7 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 		toFront();
 
 		setStatusMessage("Ready");
-		SplashScreen.hide();
+//		SplashScreen.hide();
 
 		//
 		// Raise the swing thread to max priority
@@ -1115,7 +1121,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 	public void showInformationDialog(final String message) {
 		Runnable r = new Runnable() {
 			public void run() {
-				JOptionPane.showMessageDialog(HermesBrowser.this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(HermesBrowser.this, message, "Information",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		};
 
@@ -1161,10 +1168,12 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 				if (t instanceof PyException) {
 					PyException pyT = (PyException) t;
 
-					JOptionPane.showMessageDialog(HermesBrowser.this, message + ": " + pyT.traceback.dumpStack(), "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(HermesBrowser.this, message + ": " + pyT.traceback.dumpStack(),
+							"Error", JOptionPane.ERROR_MESSAGE);
 				} else {
 
-					JOptionPane.showMessageDialog(HermesBrowser.this, message + ": " + t.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(HermesBrowser.this, message + ": " + t.getMessage(), "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		};
@@ -1194,8 +1203,8 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 					detail = s.toString();
 				}
 
-				JideOptionPane optionPane = new JideOptionPane(message, JOptionPane.ERROR_MESSAGE, JideOptionPane.CLOSE_OPTION,
-						UIManager.getIcon("OptionPane.errorIcon"));
+				JideOptionPane optionPane = new JideOptionPane(message, JOptionPane.ERROR_MESSAGE,
+						JideOptionPane.CLOSE_OPTION, UIManager.getIcon("OptionPane.errorIcon"));
 				optionPane.setTitle(message);
 
 				if (detail != null) {
@@ -1297,28 +1306,28 @@ public class HermesBrowser extends DefaultDockableBarDockableHolder implements H
 	}
 
 	public MessageStoreBrowserAction getOpenStoreBrowser(MessageStore store) {
-		for (int d = 0 ; d < HermesBrowser.getBrowser().getDocumentPane().getDocumentCount() ; d++) {
-			 DocumentComponent doc =  HermesBrowser.getBrowser().getDocumentPane().getDocumentAt(d) ;
-			 if (doc instanceof MessageStoreBrowserAction) {
-				 MessageStoreBrowserAction sBrowser = (MessageStoreBrowserAction) doc ;
-				 if (sBrowser.getMessageStore().equals(store)) {
-					 return sBrowser ;
-				 }
-			 }
-		 }
-		return null ;
+		for (int d = 0; d < HermesBrowser.getBrowser().getDocumentPane().getDocumentCount(); d++) {
+			DocumentComponent doc = HermesBrowser.getBrowser().getDocumentPane().getDocumentAt(d);
+			if (doc instanceof MessageStoreBrowserAction) {
+				MessageStoreBrowserAction sBrowser = (MessageStoreBrowserAction) doc;
+				if (sBrowser.getMessageStore().equals(store)) {
+					return sBrowser;
+				}
+			}
+		}
+		return null;
 	}
-	
+
 	public QueueBrowseAction getOpenQueueBrowser(DestinationConfig config) {
-		for (int d = 0 ; d < HermesBrowser.getBrowser().getDocumentPane().getDocumentCount() ; d++) {
-			 DocumentComponent doc =  HermesBrowser.getBrowser().getDocumentPane().getDocumentAt(d) ;
-			 if (doc instanceof QueueBrowseAction) {
-				 QueueBrowseAction qBrowser = (QueueBrowseAction) doc ;
-				 if (qBrowser.getDestinationConfig().equals(config)) {
-					 return qBrowser ;
-				 }
-			 }
-		 }
-		return null ;
+		for (int d = 0; d < HermesBrowser.getBrowser().getDocumentPane().getDocumentCount(); d++) {
+			DocumentComponent doc = HermesBrowser.getBrowser().getDocumentPane().getDocumentAt(d);
+			if (doc instanceof QueueBrowseAction) {
+				QueueBrowseAction qBrowser = (QueueBrowseAction) doc;
+				if (qBrowser.getDestinationConfig().equals(config)) {
+					return qBrowser;
+				}
+			}
+		}
+		return null;
 	}
 }

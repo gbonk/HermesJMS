@@ -253,15 +253,15 @@ public class NIOFIXFileReader implements FIXReader, Runnable
          {
             if (parseBuffer == null || channel.size() > mappedStart)
             {
-               if (parseBuffer != null)
-               {
-                  clean(parseBuffer);
-               }
-
-               if (readBuffer != null)
-               {
-                  clean(readBuffer);
-               }
+//               if (parseBuffer != null)
+//               {
+//                  clean(parseBuffer);
+//               }
+//
+//               if (readBuffer != null)
+//               {
+//                  clean(readBuffer);
+//               }
 
                // log.debug("mapping in FIX file, mappedStart=" + mappedStart +
                // " channel.size()=" + channel.size());
@@ -277,27 +277,28 @@ public class NIOFIXFileReader implements FIXReader, Runnable
       }
    }
 
-   private final void clean(final MappedByteBuffer buffer)
-   {
-      AccessController.doPrivileged(new PrivilegedAction()
-      {
-         public Object run()
-         {
-            try
-            {
-               Method getCleanerMethod = buffer.getClass().getMethod("cleaner", new Class[0]);
-               getCleanerMethod.setAccessible(true);
-               sun.misc.Cleaner cleaner = (sun.misc.Cleaner) getCleanerMethod.invoke(buffer, new Object[0]);
-               cleaner.clean();
-            }
-            catch (Exception e)
-            {
-               log.error(e.getMessage(), e);
-            }
-            return null;
-         }
-      });
-   }
+//TODO?  Removed this 
+//   private final void clean(final MappedByteBuffer buffer)
+//   {
+//      AccessController.doPrivileged(new PrivilegedAction()
+//      {
+//         public Object run()
+//         {
+//            try
+//            {
+//               Method getCleanerMethod = buffer.getClass().getMethod("cleaner", new Class[0]);
+//               getCleanerMethod.setAccessible(true);
+//               sun.misc.Cleaner cleaner = (sun.misc.Cleaner) getCleanerMethod.invoke(buffer, new Object[0]);
+//               cleaner.clean();
+//            }
+//            catch (Exception e)
+//            {
+//               log.error(e.getMessage(), e);
+//            }
+//            return null;
+//         }
+//      });
+//   }
 
    public void release()
    {
@@ -307,7 +308,7 @@ public class NIOFIXFileReader implements FIXReader, Runnable
          {
             log.debug("releasing read memory map");
 
-            clean(readBuffer);
+//           clean(readBuffer);
             readBuffer = null;
          }
       }
@@ -335,7 +336,7 @@ public class NIOFIXFileReader implements FIXReader, Runnable
                {
                   log.debug("releasing parse memory map");
 
-                  clean(parseBuffer);
+//                  clean(parseBuffer);
                }
 
                parseBuffer = null;

@@ -29,10 +29,10 @@ import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 
 import org.apache.log4j.Logger;
-
-import COM.activesw.api.client.BrokerAdminClient;
-import COM.activesw.api.client.BrokerClientInfo;
-import COM.activesw.api.client.BrokerConnectionDescriptor;
+//TODO had to make these lowercase as I'm on a Mac
+import com.activesw.api.client.BrokerAdminClient;
+import com.activesw.api.client.BrokerClientInfo;
+import com.activesw.api.client.BrokerConnectionDescriptor;
 
 import com.wm.broker.jms.AdminFactory;
 import com.wm.broker.jms.QueueAdmin;
