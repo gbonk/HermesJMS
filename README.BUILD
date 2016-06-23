@@ -1,5 +1,11 @@
 
-Building Hermes requires a 1.5 JDK.
+Building Hermes requires a 1.6 JDK
+
+Updated a bunch of things to get this to work with IBM MQ in JDK 8
+
+Now can be built with Gradle ( though it's not effcient yet )
+
+Previous Disclaimers:
 
 You must seprartely obtain the JIDE libraries from http://www.jidesoft.com. If you do any work on Hermes that uses the JIDE API or redistribute Hermes you must contact JIDE for an appropriate license. All of Hermes is Apache 2.0 licensed but it depends on JIDE which is commercial. 
 
@@ -7,5 +13,3 @@ Edit the build.properties to reflect the location of all of your JMS providers. 
 
 Take particular care to note how to deal with the JIDE install, you will need to un-jar the libraries as described in the properties file.
 In the top directory of the module, invoke ant. Everything should now build. A distribution is automatically created in the directory hermes-X.X containing scripts and libraries. X.X is defined in the build.xml.
-
-Colin Crist, September 2005
